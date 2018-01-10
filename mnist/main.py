@@ -111,3 +111,7 @@ def test():
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test()
+
+PATH = './model'
+
+torch.save(model.state_dict(), PATH)
