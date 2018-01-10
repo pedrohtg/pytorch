@@ -34,7 +34,11 @@ class DigitSamples(Dataset):
 
     def __getitem__(self, idx):
         if idx >= 0 and idx < len(self.imgs):
-            return {'image': self.transform(io.imread(join(self.root_dir, self.imgs[idx]))), 'name': self.imgs[idx]} 
+            img = io.imread(join(self.root_dir, self.imgs[idx]))
+            img = img.transpose((2, 0, 1))
+            if self.transform:
+                img = self.transform(img)
+            return {'image': img, 'name': self.imgs[idx]} 
 
 
 dig_dataset = DigitSamples(IMG_PATH,  transform=transforms.Compose([
