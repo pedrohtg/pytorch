@@ -37,7 +37,7 @@ class DigitSamples(Dataset):
 
             imgname = join(self.root_dir, self.imgs[idx])
 
-            img = skimage.img_as_float(skimage.io.imread(imgname, as_grey=True)).astype(np.float32)
+            img = skimage.img_as_float(io.imread(imgname, as_grey=True)).astype(np.float32)
             if img.ndim == 2:
                 img = img[:, :, np.newaxis]
             elif img.shape[2] == 4:
