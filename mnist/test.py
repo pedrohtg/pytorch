@@ -34,10 +34,13 @@ class DigitSamples(Dataset):
 
     def __getitem__(self, idx):
         if idx >= 0 and idx < len(self.imgs):
-            return {'image': io.imread(join(self.root_dir, self.imgs[idx])), 'name': self.imgs[idx]} 
+            return {'image': self.transform(io.imread(join(self.root_dir, self.imgs[idx]))), 'name': self.imgs[idx]} 
 
 
-dig_dataset = DigitSamples(IMG_PATH)
+dig_dataset = DigitSamples(IMG_PATH,  transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                       ]))
 
 class Net(nn.Module):
     def __init__(self):
@@ -62,15 +65,19 @@ model.load_state_dict(torch.load(PATH))
 if cuda:
     model.cuda()
 
+kwargs = {'num_workers': 1, 'pin_memory': True} if cuda else {}
+test_loader = torch.utils.data.DataLoader(dig_dataset,
+    batch_size=1, shuffle=True, **kwargs)
+
+
 def test():
     model.eval()
     test_loss = 0
     correct = 0
-    for i in range(len(dig_dataset)):
-        sample = dig_dataset[i]
-        data, name = torch.from_numpy(sample['image']), sample['name']
+    for sample in test_loader:
+        data, name = sample['image'], sample['name']
         if cuda:
-            data= data.cuda()
+            data = data.cuda()
         data = Variable(data, volatile=True)
         output = model(data)
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
