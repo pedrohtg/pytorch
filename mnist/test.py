@@ -34,7 +34,16 @@ class DigitSamples(Dataset):
 
     def __getitem__(self, idx):
         if idx >= 0 and idx < len(self.imgs):
-            img = io.imread(join(self.root_dir, self.imgs[idx]))
+
+            imgname = join(self.root_dir, self.imgs[idx])
+
+            img = skimage.img_as_float(skimage.io.imread(imgname, as_grey=True)).astype(np.float32)
+            if img.ndim == 2:
+                img = img[:, :, np.newaxis]
+            elif img.shape[2] == 4:
+                img = img[:, :, :3]
+
+            #img = io.imread(join(self.root_dir, self.imgs[idx]))
             img = img.transpose((2, 0, 1))
             if self.transform:
                 img = self.transform(img)
