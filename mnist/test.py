@@ -33,12 +33,11 @@ class DigitSamples(Dataset):
         return self.len
 
     def __getitem__(self, idx):
-        if idx > 0 and idx < len(self.imgs):
-            return {'image': io.imread(self.root_dir + self.imgs[idx]), 'name': self.imgs[idx]} 
+        if idx >= 0 and idx < len(self.imgs):
+            return {'image': io.imread(join(self.root_dir, self.imgs[idx])), 'name': self.imgs[idx]} 
 
 
 dig_dataset = DigitSamples(IMG_PATH)
-print(type(dig_dataset))
 
 class Net(nn.Module):
     def __init__(self):
@@ -69,7 +68,7 @@ def test():
     correct = 0
     for i in range(len(dig_dataset)):
         sample = dig_dataset[i]
-        data, name = sample['image'], sample['name']
+        data, name = torch.from_numpy(sample['image']), sample['name']
         if cuda:
             data= data.cuda()
         data = Variable(data, volatile=True)
