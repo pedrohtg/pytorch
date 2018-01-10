@@ -38,6 +38,7 @@ class DigitSamples(Dataset):
 
 
 dig_dataset = DigitSamples(IMG_PATH)
+print(type(dig_dataset))
 
 class Net(nn.Module):
     def __init__(self):
