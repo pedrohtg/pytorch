@@ -39,25 +39,18 @@ class DigitSamples(Dataset):
             imgname = join(self.root_dir, self.imgs[idx])
 
             img = skimage.img_as_float(io.imread(imgname, as_grey=True)).astype(np.float32)
-            #print(img.shape)
             if img.ndim == 2:
                 img = img[:, :, np.newaxis]
             elif img.shape[2] == 4:
                 img = img[:, :, :3]
 
-            #img = io.imread(join(self.root_dir, self.imgs[idx]))
-            #print(img.shape)
-            #img = img.transpose((2, 0, 1))
-            #print(img.shape)
             if self.transform:
                 img = self.transform(img)
-            #print(img.shape)
             return {'image': img, 'name': self.imgs[idx]} 
 
 
 dig_dataset = DigitSamples(IMG_PATH,  transform=transforms.Compose([
-                       transforms.ToTensor(),
-                       transforms.Normalize((0.1307,), (0.3081,))
+                       transforms.ToTensor()
                        ]))
 
 class Net(nn.Module):
@@ -90,8 +83,6 @@ test_loader = torch.utils.data.DataLoader(dig_dataset,
 
 def test():
     model.eval()
-    test_loss = 0
-    correct = 0
     for sample in test_loader:
         data, name = sample['image'], sample['name']
         if cuda:
@@ -99,6 +90,7 @@ def test():
         data = Variable(data, volatile=True)
         output = model(data)
         pred = output.data.max(1, keepdim=True)[1] # get the index of the max log-probability
-        print("Pred: " + str(pred) + "Img: " + name)
+        print(name)
+        print("Pred: " + str(pred) + "Img: ")
 
 test()
