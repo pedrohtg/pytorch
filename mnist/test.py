@@ -39,19 +39,19 @@ class DigitSamples(Dataset):
             imgname = join(self.root_dir, self.imgs[idx])
 
             img = skimage.img_as_float(io.imread(imgname, as_grey=True)).astype(np.float32)
-            print(img.shape)
+            #print(img.shape)
             if img.ndim == 2:
                 img = img[:, :, np.newaxis]
             elif img.shape[2] == 4:
                 img = img[:, :, :3]
 
             #img = io.imread(join(self.root_dir, self.imgs[idx]))
-            print(img.shape)
-            img = img.transpose((2, 0, 1))
-            print(img.shape)
+            #print(img.shape)
+            #img = img.transpose((2, 0, 1))
+            #print(img.shape)
             if self.transform:
                 img = self.transform(img)
-            print(img.shape)
+            #print(img.shape)
             return {'image': img, 'name': self.imgs[idx]} 
 
 
