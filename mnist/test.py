@@ -19,6 +19,8 @@ PATH = './model'
 IMG_PATH = './imgs/'
 NUM_IMG = 6
 
+cuda = torch.cuda.is_available()
+
 class DigitSamples(Dataset):
 
     def __init__(self, root_dir, transform=None):
@@ -57,7 +59,7 @@ class Net(nn.Module):
 
 model = Net()
 model.load_state_dict(torch.load(PATH))
-if args.cuda:
+if cuda:
     model.cuda()
 
 def test():
@@ -67,7 +69,7 @@ def test():
     for i in range(len(dig_dataset)):
         sample = dig_dataset[i]
         data, name = sample['image'], sample['name']
-        if args.cuda:
+        if cuda:
             data= data.cuda()
         data = Variable(data, volatile=True)
         output = model(data)
